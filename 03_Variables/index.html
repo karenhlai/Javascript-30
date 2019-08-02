@@ -4,9 +4,64 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>CSS Variables</title>
+  <link rel="stylesheet" href="style.css">
+  <title>Update CSS Variables with JS</title>
+  <!-- When you update a var in CSS< everywhere on the page where that var is referenced will update itself -->
+  <!-- as opposed to sass, where its file is defined in compile time - it gets compiled and you cannot change it -->
 </head>
 <body>
-  
+  <h2>Scoped CSS Variables and <span class="hl">JS</span></h2>
+
+  <div class="controls">
+    <label for="spacing">Spacing:</label>
+    <input type="range" name="spacing" min="10" max="200" value="10" data-sizing="px"> 
+    
+    <label for="blur">Blur:</label>
+    <input type="range" name="blur" min="0" max="25" value="10" data-sizing="px">
+    
+    <label for="base">Base Color:</label>
+    <input type="range" name="base" value="#fffc600">
+  </div>
+
+  <img src="http://www.txywc.org/wp-content/uploads/2018/11/property.jpg" />
+
+  <style>
+    :root {
+      /* define variables */
+      --base: #fffc600;
+      --spacing: 10px;
+      --blur: 10px;
+    }
+
+    /* to use a var --spacing in CSS */
+    img {
+      padding: var(--spacing); 
+      background: var(--base);
+      filter: blur(var(--blur));
+    }
+
+    .hl {
+      color: var(--base);
+    }
+  </style>
+
+  <script>
+    const inputs = document.querySelectorAll('.controls input');
+    // no need to convert NodeList to Array - NodeList has forEach method on Chrome browser
+    // listen for change on each of the inputs
+    inputs.forEach(input => input.addEventListener('change', handleUpdate));
+    inputs.forEach(input => input.addEventListener('mousemove', handleUpdate));
+    // can optionally add click set to true or false onUpdate
+
+    function handleUpdate() {
+      const suffix = this.dataset.sizing || ''; 
+      // this.dataset is an obj that will contain all the data attributes from that specific el (sizing)
+      // grabs everything following "data-"
+      //suffix is necessary to use below, otherwise only number would be update on console, need to append "px" for CSS to read
+      document.documentElement.stlye.setProperty(`--${this.name}`, this.value + suffix);
+    }
+
+  </script>
+
 </body>
 </html>
